@@ -6,6 +6,7 @@ description = "TileRT"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
+authors = [{name = "TileRT-team", email = "contact@tilert.ai"}]
 classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -14,7 +15,7 @@ classifiers = [
 ]
 
 dependencies = [
-    # Pinned to the exact ABI the v0.1.4 wheel was built against. ``torch`` must
+    # Pinned to the exact ABI the v0.1.5 wheel was built against. ``torch`` must
     # come from PyTorch's cu130 index (``--index-url
     # https://download.pytorch.org/whl/cu130``); installing from PyPI yields a
     # CUDA build that does not match the cu130-linked tilert binary.
@@ -64,7 +65,7 @@ dev = [
 Homepage = "https://github.com/tile-ai/TileRT"
 Issues = "https://github.com/tile-ai/TileRT/issues"
 
-# Note: this repository ships the public sources that match the v0.1.4 wheel.
+# Note: this repository ships the public sources that match the v0.1.5 wheel.
 # The wheel itself is built in the development repo (TileRT-dev/TileRT) with
 # scikit-build-core; no [build-system] block is declared here on purpose so
 # nobody accidentally runs ``pip wheel .`` against this presentation copy.
@@ -109,6 +110,16 @@ strict_optional = true
 ignore_missing_imports = true
 exclude = ["3rd-party/"]
 explicit_package_bases = true
+
+# pd_vllm is glue over vLLM's connector API; its interface methods take
+# ``Any``-typed params by contract, so full def-level annotation is low value.
+# Relax annotation-completeness there, but keep real type checks (arg-type,
+# union-attr, etc.) on so genuine mistakes still surface.
+[[tool.mypy.overrides]]
+module = "tilert.pd_vllm.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+warn_return_any = false
 
 [tool.bandit]
 exclude_dirs = ["tests", "3rd-party"]
